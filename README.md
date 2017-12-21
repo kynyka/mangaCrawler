@@ -1,0 +1,1 @@
+A plain crawler for getting one manga's episodes, with features faking browser visits and auto-renaming filenames when necessary.  Local manga files will be automatically updated if the script's run via Task Scheduler in Windows.
