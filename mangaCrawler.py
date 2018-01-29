@@ -21,6 +21,7 @@ def no_get(u):
 def get_dl(z, y, x, w):
     print 'Yes, <{}> chapter(s) need to be downloaded!'.format(y)
     cd(z)
+    print '\nProcess Start...'
     build_folder(path + x)
     count = 0
     r_new = urllib2.urlopen(urllib2.Request(url= w, headers=send_headers))
@@ -39,13 +40,15 @@ def get_dl(z, y, x, w):
         if len(result) != 0:
             if int(img_name[:2]) < 10:
                 img_rename = img_name[:2] + result[0][1]
-            else:
+            elif 10 <= int(img_name[:2]) < 20:
                 img_rename = img_name[:2] + result[0][3]
+            else:
+                img_rename = img_name[:2] + result[0][5]
             urllib.urlretrieve('https:' + p, path + x + '/' + img_rename)
-            print '{} --> {}  √'.format(img_name, img_rename)
+            print '{} --> {}  OK'.format(img_name, img_rename)
         else:
             urllib.urlretrieve('https:' + p, path + x + '/' + img_name)
-            print img_name, ' √'
+            print img_name, ' OK'
         count += 1
     print 'Download Counts: <{}>'.format(count)
     if count == int(last_pno):
@@ -108,7 +111,7 @@ if __name__ == "__main__":
         reg2 = re.compile(r'<li><a href="/r/shokugeki_no_souma/\d+/\d+/(\d+)">.+</a></li>')
         reg3 = re.compile(r'<img id="manga-page" src="(.+)"')
         reg4 = re.compile(r'//.+/\d+/\d+/(.+\.(?:jpg|png))') # non-capturing group, avoiding possible later .group(n)
-        reg5 = re.compile(r'(0\d(?:1|2))(\D{4,5})|(1\d(?:1|2))(\D{4,5})') # for instances like 012.png/031.jpeg/161.png
+        reg5 = re.compile(r'(0\d(?:1|2))(\D{4,5})|(1\d(?:1|2))(\D{4,5})|(2\d(?:1|2))(\D{4,5})') # for instances like 012.png/031.jpeg/161.png/201.jpg
 
         chpt = re.findall(reg, html_m) # 返回一个list,只含四物
         chpt_lk_list = ['https://readms.net' + chpt[0][0], 'https://readms.net' + chpt[1][0], 'https://readms.net' + chpt[2][0], 'https://readms.net' + chpt[3][0]]
@@ -127,4 +130,5 @@ if __name__ == "__main__":
             update_log(f_no[0])
             do()
     except Exception,e:
+        traceback.format_exce()
         traceback.print_exc(file=open(path+'errlog.txt','wb')) # log error
