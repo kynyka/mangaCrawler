@@ -34,16 +34,20 @@ def get_dl(z, y, x, w):
     [url_c_list.append(w[0:-1] + str(n)) for n in xrange(2, int(last_pno) + 1)]
     [img_src_list.extend(re.findall(reg3, urllib2.urlopen(urllib2.Request(url=i, headers=send_headers)).read())) for i in url_c_list]
     print 'Valid Image Url Numbers: <{}>\nLast Page Number: <{}>\n'.format(len(img_src_list), last_pno)
+    # print 'img_src_list: '+str(img_src_list)
     for p in img_src_list: # start download
         img_name = re.findall(reg4, p)[0] # 原名
-        result = re.findall(reg5, img_name)
-        if len(result) != 0:
+        if img_name.split('.')[0] > 3: # seldom '0000.jpg' etc. will disturb reg5 and ruin outcome
+            img_name = img_name[2:]
+        outcome = re.findall(reg5, img_name)
+        # print 'outcome: '+str(outcome)
+        if len(outcome) != 0:
             if int(img_name[:2]) < 10:
-                img_rename = img_name[:2] + result[0][1]
+                img_rename = img_name[:2] + outcome[0][1]
             elif 10 <= int(img_name[:2]) < 20:
-                img_rename = img_name[:2] + result[0][3]
+                img_rename = img_name[:2] + outcome[0][3]
             else:
-                img_rename = img_name[:2] + result[0][5]
+                img_rename = img_name[:2] + outcome[0][5]
             urllib.urlretrieve('https:' + p, path + x + '/' + img_rename)
             print '{} --> {}  OK'.format(img_name, img_rename)
         else:
@@ -106,12 +110,12 @@ if __name__ == "__main__":
         # html_m = html_m.decode('utf-8','replace').encode(sys.getfilesystemencoding()) # 转码:避免输出出现乱码
         # print html_m
 
-        reg = re.compile(r'<a href="(/r/shokugeki_no_souma/.+)">(.+)</a>') # group
+        reg = re.compile(r'<td><a href="(/r/shokugeki_no_souma/.+)">(.+)</a></td>') # group
         reg1 = re.compile(r'\d+ -') # title No., deliberately
         reg2 = re.compile(r'<li><a href="/r/shokugeki_no_souma/\d+/\d+/(\d+)">.+</a></li>')
-        reg3 = re.compile(r'<img id="manga-page" src="(.+)"')
+        reg3 = re.compile(r'<img id="manga-page"\s{1,2}?src="(.+)"') # on 180218 site's html unexpectedly gives me 2 spaces
         reg4 = re.compile(r'//.+/\d+/\d+/(.+\.(?:jpg|png))') # non-capturing group, avoiding possible later .group(n)
-        reg5 = re.compile(r'(0\d(?:1|2))(\D{4,5})|(1\d(?:1|2))(\D{4,5})|(2\d(?:1|2))(\D{4,5})') # for instances like 012.png/031.jpeg/161.png/201.jpg
+        reg5 = re.compile(r'(0\d(?:1|2))(\D{4,5})|(1\d(?:1|2))(\D{4,5})|(2\d(?:1|2))(\D{4,5})') # for instances like 012.png/031.jpeg/161.png/201.jpg, not fit for instances like 0001.jpg/0001a.png/0002.png
 
         chpt = re.findall(reg, html_m) # 返回一个list,只含四物
         chpt_lk_list = ['https://readms.net' + chpt[0][0], 'https://readms.net' + chpt[1][0], 'https://readms.net' + chpt[2][0], 'https://readms.net' + chpt[3][0]]
@@ -130,5 +134,5 @@ if __name__ == "__main__":
             update_log(f_no[0])
             do()
     except Exception,e:
-        traceback.format_exce()
+        traceback.print_exc()
         traceback.print_exc(file=open(path+'errlog.txt','wb')) # log error
