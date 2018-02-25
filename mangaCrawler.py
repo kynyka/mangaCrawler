@@ -37,7 +37,7 @@ def get_dl(z, y, x, w):
     # print 'img_src_list: '+str(img_src_list)
     for p in img_src_list: # start download
         img_name = re.findall(reg4, p)[0] # 原名
-        if img_name.split('.')[0] > 3: # seldom '0000.jpg' etc. will disturb reg5 and ruin outcome
+        if len(img_name.split('.')[0]) > 3 and (re.search('-', img_name) == None): # seldom '0000.jpg' etc. will disturb reg5 and ruin outcome
             img_name = img_name[2:]
         outcome = re.findall(reg5, img_name)
         # print 'outcome: '+str(outcome)
