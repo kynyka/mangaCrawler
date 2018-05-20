@@ -47,14 +47,14 @@ def dl(m, o , x, v):
         o += 1
     print '\nDownload Counts: <{}>'.format(o)
     if o == int(v):
-        print '【%s】/%s pages of 【%s】 -- Process End！\n\n' % (o, v, x)
+        print '[%s]/%s pages of [%s] -- Process End！\n\n' % (o, v, x)
     else:
         print u'エラーが発生しました'
 
 def get_dl(z, y, x, w):
-    print '【{}】 chapter(s) left!'.format(y)
+    print '[{}] chapter(s) left!'.format(y)
     cd(z)
-    print '\n【{}】 -- Process Start...'.format(x)
+    print '\n[{}] -- Process Start...'.format(x)
     build_folder(path + x)
 
     url_c_list = [] # 第一页chpt_lk_list[0]就不放进去了,因为能同时获得第一张图
@@ -96,7 +96,12 @@ def do():
         print "Latest Chapter Already!"
     elif diff <= 4: ##目前站点上仅保留4话##
         for d in xrange(diff):
-            get_dl(5, diff, chpt[diff-1][1], chpt_lk_list[diff-1])
+            if re.search(r':', chpt[diff-1][1]) != None:
+                tp = chpt[diff-1][1]
+                tp = tp.replace(':', '：') # directly manipulating tuple items are illegal, so a third party is needed;replace some half-width special characters with corresponding full-width chars
+                get_dl(5, diff, tp, chpt_lk_list[diff-1])
+            else:
+                get_dl(5, diff, chpt[diff-1][1], chpt_lk_list[diff-1])
             diff -= 1
     else:
         print "Make a check!\nlatest ONLINE No.: {}\n latest LOCAL No.: {}".format(*[chpt_no_latest, chpt_no_local])
@@ -105,6 +110,8 @@ def do():
 
 if __name__ == "__main__":
     try:
+        reload(sys)
+        sys.setdefaultencoding('utf-8') # Added for tp.replace, thus prior unicode decoding methods go redundant and I just let this go.
         path = unicode("D:/迅雷下载/Shokugeki Manga Eng/", "utf-8")
         # 进入更新母页获取子页链接
         url_m = "https://readms.net/manga/shokugeki_no_souma"
