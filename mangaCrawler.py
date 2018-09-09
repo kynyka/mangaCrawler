@@ -96,9 +96,9 @@ def do():
         print "Latest Chapter Already!"
     elif diff <= 4: ##目前站点上仅保留4话##
         for d in xrange(diff):
-            if re.search(r':', chpt[diff-1][1]) != None:
+            if re.search(r'[:?]', chpt[diff-1][1]) != None:
                 tp = chpt[diff-1][1]
-                tp = tp.replace(':', '：') # directly manipulating tuple items are illegal, so a third party is needed;replace some half-width special characters with corresponding full-width chars
+                tp = tp.replace(':', '：').replace('?', '？') # directly manipulating tuple items are illegal, so a third party is needed;replace some half-width special characters with corresponding full-width chars
                 get_dl(5, diff, tp, chpt_lk_list[diff-1])
             else:
                 get_dl(5, diff, chpt[diff-1][1], chpt_lk_list[diff-1])
