@@ -53,9 +53,9 @@ def dl(m, o , x, v):
 
 def get_dl(z, y, x, w):
     print '[{}] chapter(s) left!'.format(y)
-    cd(z)
+    count_down(z)
     print '\n[{}] -- Process Start...'.format(x)
-    build_folder(path + x)
+    build_folder(path + x + '/') # fix can't create folder names contain dots
 
     url_c_list = [] # 第一页chpt_lk_list[0]就不放进去了,因为能同时获得第一张图
     img_src_list = []  ##上一行与这行移到函数中, 不然一次下几话的情况时会导致重复添加##
@@ -80,7 +80,7 @@ def update_log(c):
         ts = time.strftime('%Y/%m/%d %H:%M:%S')
         pickle.dump(c+'@'+ts, f)
 
-def cd(t):
+def count_down(t):
     while t >= 0: # 加了“=”
         sys.stdout.write('\rTime lapse: {}s'.format(t))
         t -= 1
@@ -122,6 +122,7 @@ if __name__ == "__main__":
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64)'
         }
 
+        print 'Start Fetching Relative Page Data. Please Be Patient!'
         req = urllib2.Request(url=url_m, headers=send_headers)
         r = urllib2.urlopen(req)
         html_m = r.read() # 返回的网页内容
